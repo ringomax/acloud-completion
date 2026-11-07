@@ -1,0 +1,597 @@
+[
+  {
+    "command": "acloud api call",
+    "summary": "Execute the same caller contract as ACP MCP. JSON output. Request files or stdin carry bodies; writes are sent once, with existing Platform IAM.",
+    "usage": "acloud api call OPERATION_ID [--project PROJECT_ID] [--path NAME=VALUE]... [--query NAME=VALUE]... [--body-file FILE|-]"
+  },
+  {
+    "command": "acloud api describe",
+    "summary": "Read its parameters, body and response schemas.",
+    "usage": "acloud api describe OPERATION_ID"
+  },
+  {
+    "command": "acloud api list",
+    "summary": "List the caller API operations, including License.",
+    "usage": "acloud api list"
+  },
+  {
+    "command": "acloud auth login",
+    "summary": "Sign in through the browser. Do this first.",
+    "usage": "acloud auth login"
+  },
+  {
+    "command": "acloud auth logout",
+    "summary": "Sign out or inspect the current Platform identity.",
+    "usage": "acloud auth logout"
+  },
+  {
+    "command": "acloud auth status",
+    "summary": "Sign out or inspect the current Platform identity.",
+    "usage": "acloud auth status"
+  },
+  {
+    "command": "acloud cli describe",
+    "summary": "Read a command's usage and explanation as JSON.",
+    "usage": "acloud cli describe COMMAND"
+  },
+  {
+    "command": "acloud cli search",
+    "summary": "Find executable commands with English or Japanese keywords. Always JSON; no login or network needed.",
+    "usage": "acloud cli search QUERY [--limit N]"
+  },
+  {
+    "command": "acloud config get platform-api-url",
+    "summary": "Run config get platform-api-url.",
+    "usage": "acloud config get platform-api-url"
+  },
+  {
+    "command": "acloud config get project",
+    "summary": "Run config get project.",
+    "usage": "acloud config get project"
+  },
+  {
+    "command": "acloud config set platform-api-url",
+    "summary": "Run config set platform-api-url.",
+    "usage": "acloud config set platform-api-url URL"
+  },
+  {
+    "command": "acloud config set project",
+    "summary": "Run config set project.",
+    "usage": "acloud config set project PROJECT_ID"
+  },
+  {
+    "command": "acloud config unset platform-api-url",
+    "summary": "Run config unset platform-api-url.",
+    "usage": "acloud config unset platform-api-url"
+  },
+  {
+    "command": "acloud config unset project",
+    "summary": "Run config unset project.",
+    "usage": "acloud config unset project"
+  },
+  {
+    "command": "acloud db branches create",
+    "summary": "Branch from the default branch or --parent, at its latest or at TIME (RFC 3339, within the last 7 days). DURATION is like 1h, 24h or 7d, at most 30d; without either the branch is kept. A Database holds at most 10 branches, the default branch and kept restore states included. Changes need Database Branch Manager; changing the default branch and set-default need Database Operator.",
+    "usage": "acloud db branches create DATABASE --project PROJECT_ID [--name NAME] [--parent BRANCH] [--at TIME] [--expire-in DURATION | --expire-at TIME]"
+  },
+  {
+    "command": "acloud db branches delete",
+    "summary": "Delete a PostgreSQL branch, its endpoint, compute and data. Its data cannot be restored afterwards. The default branch and a branch that others were made from cannot be deleted.",
+    "usage": "acloud db branches delete DATABASE BRANCH --project PROJECT_ID --confirm BRANCH"
+  },
+  {
+    "command": "acloud db branches describe",
+    "summary": "Read one PostgreSQL branch of a Database. BRANCH is a branch name or ID, here and in the commands below.",
+    "usage": "acloud db branches describe DATABASE BRANCH --project PROJECT_ID [--format json]"
+  },
+  {
+    "command": "acloud db branches list",
+    "summary": "PostgreSQL branches, oldest first. Each has its own endpoint and compute on the Database's storage; the default branch is what the Database's own connection means. Reads need Database Viewer or higher.",
+    "usage": "acloud db branches list DATABASE --project PROJECT_ID [--format json]"
+  },
+  {
+    "command": "acloud db branches restore",
+    "summary": "Put the branch back to its own past (--at alone), to another branch (--from), or to its parent's latest. The state it replaces is kept as branch NAME, or BRANCH_old_TIME. The host name stays; connections wait for the new compute. If the result is unknown, run describe before trying again.",
+    "usage": "acloud db branches restore DATABASE BRANCH --project PROJECT_ID (--from-parent | --from BRANCH [--at TIME] | --at TIME) [--preserve-as NAME]"
+  },
+  {
+    "command": "acloud db branches set-default",
+    "summary": "Make it what the Database's own connection reaches, from each client's next connection. Its expiry is removed.",
+    "usage": "acloud db branches set-default DATABASE BRANCH --project PROJECT_ID"
+  },
+  {
+    "command": "acloud db branches update",
+    "summary": "Rename, or change when the branch is deleted. The default branch never expires.",
+    "usage": "acloud db branches update DATABASE BRANCH --project PROJECT_ID [--name NAME] [--expire-in DURATION | --expire-at TIME | --no-expire]"
+  },
+  {
+    "command": "acloud db configuration describe",
+    "summary": "Run db configuration describe.",
+    "usage": "acloud db configuration describe DATABASE --project PROJECT_ID"
+  },
+  {
+    "command": "acloud db configuration update",
+    "summary": "Changes the PostgreSQL compute memory limit and how long the compute may sit idle before it is stopped (off keeps it running; a stopped compute starts on the next connection). MySQL, ClickHouse and Valkey refuse both. update needs Database Operator; Platform Owner alone is not enough. A changed memory limit restarts PostgreSQL compute. If the result is unknown, run describe before trying again.",
+    "usage": "acloud db configuration update DATABASE --project PROJECT_ID [--memory-limit-mi 256..2048] [--suspend-timeout-seconds 60..604800|off]"
+  },
+  {
+    "command": "acloud db connection describe",
+    "summary": "Endpoint and Platform session availability. Needs Database Viewer or higher.",
+    "usage": "acloud db connection describe DATABASE --project PROJECT_ID [--format json]"
+  },
+  {
+    "command": "acloud db connection update",
+    "summary": "Change a PostgreSQL endpoint's TLS mode. --expected-tls-mode is the TLS_MODE that describe showed; a different stored mode is refused. MTLS stops password-only clients; TLS accepts a password without a client certificate. Needs Database Operator; Owner and Connector are not enough. The answer is the saved mode; the gateway follows shortly after. If the result is unknown, run describe first.",
+    "usage": "acloud db connection update DATABASE --project PROJECT_ID --tls-mode TLS|MTLS --expected-tls-mode TLS|MTLS"
+  },
+  {
+    "command": "acloud db create",
+    "summary": "Creates under the Project's Database quota. Needs Database Creator. Omitting --engine creates PostgreSQL and records no version. A retry must omit the same flags, or send the same engine and version that were sent the first time. The returned Operation may stay pending; retry the same command if the product answer was lost. To resume a known pending Operation, use acloud operations retry OPERATION.",
+    "usage": "acloud db create DATABASE --display-name NAME [--engine ENGINE] [--engine-version VERSION] [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud db delete",
+    "summary": "Asks Arc Database to mark the project deleted and revoke credentials, then leaves the Platform record as a tombstone. Needs Database Operator; Owner is not enough. The tenant is not purged. The Operation may stay pending; retry the same command or operations retry if the product answer was lost. The ID stays taken.",
+    "usage": "acloud db delete DATABASE [--etag ETAG] [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud db describe",
+    "summary": "Run db describe.",
+    "usage": "acloud db describe DATABASE"
+  },
+  {
+    "command": "acloud db list",
+    "summary": "Run db list.",
+    "usage": "acloud db list [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud db metrics network",
+    "summary": "Gateway payload bytes by interval. Both metrics reads need Database Viewer or higher.",
+    "usage": "acloud db metrics network DATABASE --project PROJECT_ID [--period 24h|3d|7d] [--format json]"
+  },
+  {
+    "command": "acloud db metrics storage",
+    "summary": "Daily storage samples of the bound Database.",
+    "usage": "acloud db metrics storage DATABASE --project PROJECT_ID [--format json]"
+  },
+  {
+    "command": "acloud db proxy",
+    "summary": "Connect through the Platform API (default %s). Needs Database Connector on DATABASE. Uses a short-lived certificate and its database login. Without prior sign-in, stops without opening a browser.",
+    "usage": "acloud db proxy DATABASE [--project PROJECT_ID] [--branch BRANCH] [--port PORT] [--show-credentials] [--gateway-address HOST:PORT] [--platform-api-url URL]"
+  },
+  {
+    "command": "acloud iam get-policy",
+    "summary": "The grants made on RESOURCE itself.",
+    "usage": "acloud iam get-policy RESOURCE"
+  },
+  {
+    "command": "acloud iam set-policy",
+    "summary": "as edited. Refused if the policy changed after FILE was read (its etag).",
+    "usage": "acloud iam set-policy RESOURCE FILE (FILE - reads standard input)"
+  },
+  {
+    "command": "acloud invitations create",
+    "summary": "Print a one-time link; no email is sent. The invitee accepts it in the console.",
+    "usage": "acloud invitations create EMAIL --organization ORGANIZATION_ID --role ROLE"
+  },
+  {
+    "command": "acloud invitations list",
+    "summary": "Run invitations list.",
+    "usage": "acloud invitations list --organization ORGANIZATION_ID"
+  },
+  {
+    "command": "acloud invitations revoke",
+    "summary": "Run invitations revoke.",
+    "usage": "acloud invitations revoke INVITATION_ID --organization ORGANIZATION_ID"
+  },
+  {
+    "command": "acloud lb create",
+    "summary": "A logical Load Balancer: the Project's record only. It gets no dedicated IP address. Publish a WordPress Application through it with publication start and advance. Other Edge Services need an enrolled backend. Needs Load Balancer Creator and a set loadBalancer.loadBalancers limit. Running the same command again returns the same one.",
+    "usage": "acloud lb create LOAD_BALANCER --display-name NAME [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud lb delete",
+    "summary": "Rename, or delete an empty one: no Edge Service, binding or running Operation. Needs Load Balancer Operator. Without --etag the current etag is read first. A deleted ID is never issued again.",
+    "usage": "acloud lb delete LOAD_BALANCER [--etag ETAG] [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud lb describe",
+    "summary": "Run lb describe.",
+    "usage": "acloud lb describe LOAD_BALANCER"
+  },
+  {
+    "command": "acloud lb list",
+    "summary": "Run lb list.",
+    "usage": "acloud lb list [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud lb services backends",
+    "summary": "Run lb services backends.",
+    "usage": "acloud lb services backends SERVICE --load-balancer LOAD_BALANCER"
+  },
+  {
+    "command": "acloud lb services cache-purge",
+    "summary": "Purge PATH, exact or ending in \"/*\", of one Host the Edge Service serves from the CDN cache. Arc Load Balancer queues it; this waits up to 90s for it to be purged or fail. Limited per minute; refused while the operator has not enabled purging.",
+    "usage": "acloud lb services cache-purge SERVICE --load-balancer LOAD_BALANCER --host HOST --path PATH"
+  },
+  {
+    "command": "acloud lb services candidates",
+    "summary": "Backends an operator approved for a new Edge Service. Needs Edge Service Creator.",
+    "usage": "acloud lb services candidates SERVICE --load-balancer LOAD_BALANCER"
+  },
+  {
+    "command": "acloud lb services configuration",
+    "summary": "Backend, Hosts, path rules and each Host's delivery, read live. Only PUBLISHED serves.",
+    "usage": "acloud lb services configuration SERVICE --load-balancer LOAD_BALANCER"
+  },
+  {
+    "command": "acloud lb services create",
+    "summary": "Creates it in Arc Load Balancer under the Load Balancer's registration. Needs Edge Service Creator; Owner is not enough. It has no Host and serves nothing yet.",
+    "usage": "acloud lb services create SERVICE --load-balancer LOAD_BALANCER --display-name NAME --backend BACKEND_ID"
+  },
+  {
+    "command": "acloud lb services delete",
+    "summary": "Changes need Edge Service Operator. Without --etag the current one is read first; a change made since is refused. Each prints its Operation: accepted is not served. If the answer was lost, retry the Operation.",
+    "usage": "acloud lb services delete SERVICE --load-balancer LOAD_BALANCER [--etag ETAG]"
+  },
+  {
+    "command": "acloud lb services describe",
+    "summary": "Run lb services describe.",
+    "usage": "acloud lb services describe SERVICE --load-balancer LOAD_BALANCER"
+  },
+  {
+    "command": "acloud lb services hosts add",
+    "summary": "Checks the TXT record in DNS first; a Host without it is never sent.",
+    "usage": "acloud lb services hosts add SERVICE --load-balancer LOAD_BALANCER --host HOST --kind SERVE|REDIRECT"
+  },
+  {
+    "command": "acloud lb services hosts delete",
+    "summary": "Run lb services hosts delete.",
+    "usage": "acloud lb services hosts delete SERVICE --load-balancer LOAD_BALANCER --host-id HOST_ID [--etag ETAG]"
+  },
+  {
+    "command": "acloud lb services hosts prepare",
+    "summary": "The TXT record that shows the Host is yours (_arc-platform-verification.HOST), valid 7 days. Not the certificate's DNS authorization, shown after the Host is added.",
+    "usage": "acloud lb services hosts prepare SERVICE --load-balancer LOAD_BALANCER --host HOST"
+  },
+  {
+    "command": "acloud lb services hosts resume",
+    "summary": "Run lb services hosts resume.",
+    "usage": "acloud lb services hosts resume SERVICE --load-balancer LOAD_BALANCER --host-id HOST_ID [--etag ETAG]"
+  },
+  {
+    "command": "acloud lb services hosts suspend",
+    "summary": "Run lb services hosts suspend.",
+    "usage": "acloud lb services hosts suspend SERVICE --load-balancer LOAD_BALANCER --host-id HOST_ID [--etag ETAG]"
+  },
+  {
+    "command": "acloud lb services hosts verifications",
+    "summary": "Run lb services hosts verifications.",
+    "usage": "acloud lb services hosts verifications SERVICE --load-balancer LOAD_BALANCER"
+  },
+  {
+    "command": "acloud lb services hosts verify",
+    "summary": "Run lb services hosts verify.",
+    "usage": "acloud lb services hosts verify SERVICE --load-balancer LOAD_BALANCER --host HOST"
+  },
+  {
+    "command": "acloud lb services list",
+    "summary": "Run lb services list.",
+    "usage": "acloud lb services list --load-balancer LOAD_BALANCER [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud lb services logs",
+    "summary": "Recent requests: Host and path, never the query string, client address or headers.",
+    "usage": "acloud lb services logs SERVICE --load-balancer LOAD_BALANCER [--period 1h|6h|24h] [--page-size N] [--page-token TOKEN]"
+  },
+  {
+    "command": "acloud lb services metrics",
+    "summary": "Requests and bytes from Cloud Monitoring.",
+    "usage": "acloud lb services metrics SERVICE --load-balancer LOAD_BALANCER [--period 1h|6h|24h|7d]"
+  },
+  {
+    "command": "acloud lb services path-rules add",
+    "summary": "Run lb services path-rules add.",
+    "usage": "acloud lb services path-rules add SERVICE --load-balancer LOAD_BALANCER --kind EXACT|PREFIX --path PATH --backend BACKEND_ID"
+  },
+  {
+    "command": "acloud lb services path-rules delete",
+    "summary": "Run lb services path-rules delete.",
+    "usage": "acloud lb services path-rules delete SERVICE --load-balancer LOAD_BALANCER --path-rule-id ID [--etag ETAG]"
+  },
+  {
+    "command": "acloud lb services path-rules switch-backend",
+    "summary": "Run lb services path-rules switch-backend.",
+    "usage": "acloud lb services path-rules switch-backend SERVICE --load-balancer LOAD_BALANCER --path-rule-id ID --backend BACKEND_ID [--etag ETAG]"
+  },
+  {
+    "command": "acloud lb services routing",
+    "summary": "Its Hosts as the live URL map routes them.",
+    "usage": "acloud lb services routing SERVICE --load-balancer LOAD_BALANCER"
+  },
+  {
+    "command": "acloud lb services switch-backend",
+    "summary": "Run lb services switch-backend.",
+    "usage": "acloud lb services switch-backend SERVICE --load-balancer LOAD_BALANCER --backend BACKEND_ID [--etag ETAG]"
+  },
+  {
+    "command": "acloud lb update",
+    "summary": "Run lb update.",
+    "usage": "acloud lb update LOAD_BALANCER --display-name NAME [--etag ETAG] [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud operations describe",
+    "summary": "Read a Platform Operation's current state. retry resends a pending Database creation or Edge Service change unchanged.",
+    "usage": "acloud operations describe OPERATION"
+  },
+  {
+    "command": "acloud operations list",
+    "summary": "List Platform Operations. retry resends a pending Database creation or Edge Service change unchanged.",
+    "usage": "acloud operations list [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud operations retry",
+    "summary": "Retry a pending Database creation or Edge Service change unchanged. retry resends a pending Database creation or Edge Service change unchanged.",
+    "usage": "acloud operations retry OPERATION"
+  },
+  {
+    "command": "acloud organizations list",
+    "summary": "Run organizations list.",
+    "usage": "acloud organizations list"
+  },
+  {
+    "command": "acloud projects create",
+    "summary": "Run projects create.",
+    "usage": "acloud projects create PROJECT_ID --organization ORGANIZATION_ID --display-name NAME"
+  },
+  {
+    "command": "acloud projects delete",
+    "summary": "Request deletion of an empty Project.",
+    "usage": "acloud projects delete PROJECT_ID"
+  },
+  {
+    "command": "acloud projects describe",
+    "summary": "Run projects describe.",
+    "usage": "acloud projects describe [PROJECT_ID]"
+  },
+  {
+    "command": "acloud projects list",
+    "summary": "Run projects list.",
+    "usage": "acloud projects list [--organization ORGANIZATION_ID]"
+  },
+  {
+    "command": "acloud projects restore",
+    "summary": "Restore within 30 days of the request.",
+    "usage": "acloud projects restore PROJECT_ID"
+  },
+  {
+    "command": "acloud projects update",
+    "summary": "Run projects update.",
+    "usage": "acloud projects update PROJECT_ID --display-name NAME"
+  },
+  {
+    "command": "acloud quotas list",
+    "summary": "Project quota snapshot. LIMIT is what an Project Owner or operator set, or UNSET. Usage counts Platform resource records and, for Databases, creations still pending; not reconciled product inventory. Database creation is refused when its limit is UNSET or already used.",
+    "usage": "acloud quotas list [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud quotas update",
+    "summary": "Change an enforced quota limit: database.databases, loadBalancer.loadBalancers or server.wordpressApplications (Owner only). Without --etag the current one is read first; a limit changed since is refused. Existing resources over a lowered limit stay.",
+    "usage": "acloud quotas update QUOTA_ID --project PROJECT_ID --limit N --reason TEXT [--etag ETAG]"
+  },
+  {
+    "command": "acloud resources list",
+    "summary": "Run resources list.",
+    "usage": "acloud resources list [--type database|application|loadBalancer|edgeService]"
+  },
+  {
+    "command": "acloud server applications backups list",
+    "summary": "Run server applications backups list.",
+    "usage": "acloud server applications backups list APPLICATION"
+  },
+  {
+    "command": "acloud server applications backups restore",
+    "summary": "Replace the database and files with a backup. Needs Application Backup Restorer; Lifecycle Operator is not enough.",
+    "usage": "acloud server applications backups restore BACKUP --application APPLICATION --confirm BACKUP"
+  },
+  {
+    "command": "acloud server applications configuration describe",
+    "summary": "Run server applications configuration describe.",
+    "usage": "acloud server applications configuration describe APPLICATION"
+  },
+  {
+    "command": "acloud server applications configuration update",
+    "summary": "Configuration of the bound Application from Arc Server, with a headless Application's declared paths and public URL. Needs Application Viewer or Operator.",
+    "usage": "acloud server applications configuration update APPLICATION --php-memory-limit-mib 128..1024|default --expected-revision N"
+  },
+  {
+    "command": "acloud server applications create",
+    "summary": "A WordPress Application the Project owns in Arc Server, placed by the configured Runtime profile or Project placement grant. Needs Application Creator and a set server.wordpressApplications limit. Accepted is not served: use publication start and advance to publish through a Load Balancer. If no clear answer comes, run the same command again; it returns what the first one made. The publishing mode is fixed at creation. headless makes the domain an origin behind a public Application, which marks its requests X-Instaserver-Route: application (a route mark, not authentication). --application-path and --origin-path are the origin paths WordPress answers on each route; REST, assets and origin admin always answer. --public-url is where the Application serves basePath; the Runtime then writes, redirects and purges in that URL space. Refused until the operator enables headless creation.",
+    "usage": "acloud server applications create APPLICATION --display-name NAME --domain HOSTNAME [--base-path /PATH] [--publishing-mode direct|headless [--application-path /PATH]... [--origin-path /PATH]... [--public-url https://HOST[/PATH]]] [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications delete",
+    "summary": "Delete restorably until PURGE_TIME, or restore. Needs Application Lifecycle Operator; Platform Owner and Application Operator are not enough.",
+    "usage": "acloud server applications delete APPLICATION [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications describe",
+    "summary": "Run server applications describe.",
+    "usage": "acloud server applications describe APPLICATION"
+  },
+  {
+    "command": "acloud server applications iap describe",
+    "summary": "Read whether IAP protects the site, and what is applied and observed. ",
+    "usage": "acloud server applications iap describe APPLICATION"
+  },
+  {
+    "command": "acloud server applications iap disable",
+    "summary": "Make the site public (IAP off); publication advance applies it. Whether IAP lets only ArcID accounts that may read this Application reach the whole site. New Applications start with IAP on; existing sites keep public access. On a published Application enable/disable also run publication advance and print {policy, advance}; protection holds only when observed.state is PROTECTED. Needs Application Publisher. Not WordPress setup.",
+    "usage": "acloud server applications iap disable APPLICATION --confirm APPLICATION"
+  },
+  {
+    "command": "acloud server applications iap enable",
+    "summary": "Turn IAP on for the whole site; publication advance applies it. ",
+    "usage": "acloud server applications iap enable APPLICATION"
+  },
+  {
+    "command": "acloud server applications list",
+    "summary": "Run server applications list.",
+    "usage": "acloud server applications list [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications logs list",
+    "summary": "Request or runtime records, newest first. They name visitors' IP addresses; needs Application Log Viewer.",
+    "usage": "acloud server applications logs list APPLICATION [--source request|runtime] [--period 1h|24h|7d] [--start-time RFC3339] [--end-time RFC3339] [--status CODE] [--method METHOD] [--path-prefix /PATH] [--cache hit|miss] [--severity LEVEL] [--trace-id ID] [--page-size N] [--page-token TOKEN]"
+  },
+  {
+    "command": "acloud server applications operations describe",
+    "summary": "Retrying a failed Operation starts its change again and needs that change's own role.",
+    "usage": "acloud server applications operations describe OPERATION --application APPLICATION [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications operations retry",
+    "summary": "Retrying a failed Operation starts its change again and needs that change's own role.",
+    "usage": "acloud server applications operations retry OPERATION --application APPLICATION [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications publication advance",
+    "summary": "Continue publication and check the live route. advance continues publication and checks the live route. unpublish removes the Host; retire permanently closes publication after Application deletion. Accepted is not served; describe shows current delivery and verification.",
+    "usage": "acloud server applications publication advance APPLICATION"
+  },
+  {
+    "command": "acloud server applications publication cache-purge",
+    "summary": "Purge PATH, exact or ending in \"/*\", of the published Host from the CDN cache. The Host and Edge Service are the publication's. Needs Edge Service Operator on its Edge Service; refused while the operator has not enabled purging for the Load Balancer.",
+    "usage": "acloud server applications publication cache-purge APPLICATION --path PATH"
+  },
+  {
+    "command": "acloud server applications publication describe",
+    "summary": "Read current publication delivery, verification and the next required action. advance continues publication and checks the live route. unpublish removes the Host; retire permanently closes publication after Application deletion. Accepted is not served; describe shows current delivery and verification.",
+    "usage": "acloud server applications publication describe APPLICATION"
+  },
+  {
+    "command": "acloud server applications publication retarget",
+    "summary": "Move a publication that never created its Edge Service to another Load Balancer. Re-points a publication whose Edge Service was never created to another Load Balancer, clearing the operator reservation for the new one. Refused once an Edge Service exists.",
+    "usage": "acloud server applications publication retarget APPLICATION EDGE_SERVICE --load-balancer LOAD_BALANCER"
+  },
+  {
+    "command": "acloud server applications publication retire",
+    "summary": "Permanently close publication after Application deletion. advance continues publication and checks the live route. unpublish removes the Host; retire permanently closes publication after Application deletion. Accepted is not served; describe shows current delivery and verification.",
+    "usage": "acloud server applications publication retire APPLICATION"
+  },
+  {
+    "command": "acloud server applications publication start",
+    "summary": "Starts Application-owned publication. Run advance to reserve and create its Edge Service under the configured shared profile. Legacy Sites may need an operator reservation. describe reports the next step and required DNS.",
+    "usage": "acloud server applications publication start APPLICATION EDGE_SERVICE --load-balancer LOAD_BALANCER"
+  },
+  {
+    "command": "acloud server applications publication unpublish",
+    "summary": "Remove the published Host. advance continues publication and checks the live route. unpublish removes the Host; retire permanently closes publication after Application deletion. Accepted is not served; describe shows current delivery and verification.",
+    "usage": "acloud server applications publication unpublish APPLICATION"
+  },
+  {
+    "command": "acloud server applications readiness check",
+    "summary": "Arc Server checks an enrolled Site's public route now. Only this check says whether it serves; a stored ready stays after a failed one. Needs Application Readiness Checker.",
+    "usage": "acloud server applications readiness check APPLICATION"
+  },
+  {
+    "command": "acloud server applications reconcile",
+    "summary": "Settle a creation whose answer was lost (any Application Creator), or record a purge Arc Server reports, which releases its quota unit.",
+    "usage": "acloud server applications reconcile APPLICATION [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications request-logs describe",
+    "summary": "Run server applications request-logs describe.",
+    "usage": "acloud server applications request-logs describe APPLICATION"
+  },
+  {
+    "command": "acloud server applications request-logs update",
+    "summary": "Run server applications request-logs update.",
+    "usage": "acloud server applications request-logs update APPLICATION --preserved false"
+  },
+  {
+    "command": "acloud server applications restore",
+    "summary": "Delete restorably until PURGE_TIME, or restore. Needs Application Lifecycle Operator; Platform Owner and Application Operator are not enough.",
+    "usage": "acloud server applications restore APPLICATION [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications runtime describe",
+    "summary": "State, runtime and public stages, and the last Arc Server Operation. Needs Application Viewer or higher.",
+    "usage": "acloud server applications runtime describe APPLICATION [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications setup-sessions create",
+    "summary": "Print a ten-minute URL to WordPress's initial setup, where the first administrator is created. Only while the runtime is ready and WordPress is not set up; needs Application Setup Administrator. It works only once the domain reaches the Runtime over HTTPS. Do not share or store it.",
+    "usage": "acloud server applications setup-sessions create APPLICATION [--project PROJECT_ID]"
+  },
+  {
+    "command": "acloud server applications sftp",
+    "summary": "Prepare a local key, register or reuse scoped access and open OpenSSH SFTP. Default scope is wp-content; new access lasts one day. Expired or revoked access gets a new key on the next connection. Needs Application SFTP Administrator; Viewer can reuse existing access only. --proxy listens on localhost:2222 for Transmit (user acloud, password blank, no private key). --port changes the local port. Ctrl+C closes connections. Compare the first host-key fingerprint with the gateway operator's record. Batch mode requires a known host key. Requires OpenSSH ssh-keygen and sftp.",
+    "usage": "acloud server applications sftp APPLICATION [--project PROJECT_ID] [--scope PATH ...] [--lifetime-days 1..365] [--batch-file FILE|-] [--proxy [--port 1..65535]] [--platform-api-url URL]"
+  },
+  {
+    "command": "acloud server applications sftp-principals add-key",
+    "summary": "SFTP access for an external operator, with a public key read from --public-key-file. A private key is refused before sending. Changes need Application SFTP Administrator. These answer only once a Workspace Site is enrolled.",
+    "usage": "acloud server applications sftp-principals add-key PRINCIPAL --application APPLICATION --public-key-file FILE|- [--expected-revision N]"
+  },
+  {
+    "command": "acloud server applications sftp-principals create",
+    "summary": "SFTP access for an external operator, with a public key read from --public-key-file. A private key is refused before sending. Changes need Application SFTP Administrator. These answer only once a Workspace Site is enrolled.",
+    "usage": "acloud server applications sftp-principals create APPLICATION --label TEXT --scope PATH [--scope PATH ...] --public-key-file FILE|- --lifetime-days N"
+  },
+  {
+    "command": "acloud server applications sftp-principals describe",
+    "summary": "SFTP access for an external operator, with a public key read from --public-key-file. A private key is refused before sending. Changes need Application SFTP Administrator. These answer only once a Workspace Site is enrolled.",
+    "usage": "acloud server applications sftp-principals describe PRINCIPAL --application APPLICATION"
+  },
+  {
+    "command": "acloud server applications sftp-principals list",
+    "summary": "SFTP access for an external operator, with a public key read from --public-key-file. A private key is refused before sending. Changes need Application SFTP Administrator. These answer only once a Workspace Site is enrolled.",
+    "usage": "acloud server applications sftp-principals list APPLICATION"
+  },
+  {
+    "command": "acloud server applications sftp-principals remove-key",
+    "summary": "SFTP access for an external operator, with a public key read from --public-key-file. A private key is refused before sending. Changes need Application SFTP Administrator. These answer only once a Workspace Site is enrolled.",
+    "usage": "acloud server applications sftp-principals remove-key PRINCIPAL --application APPLICATION --fingerprint SHA256:... [--expected-revision N]"
+  },
+  {
+    "command": "acloud server applications sftp-principals revoke",
+    "summary": "SFTP access for an external operator, with a public key read from --public-key-file. A private key is refused before sending. Changes need Application SFTP Administrator. These answer only once a Workspace Site is enrolled.",
+    "usage": "acloud server applications sftp-principals revoke PRINCIPAL --application APPLICATION [--expected-revision N]"
+  },
+  {
+    "command": "acloud server applications static-roots describe",
+    "summary": "Directories outside wp-content. update replaces the whole set from --expected-revision; needs Application Static Root Administrator.",
+    "usage": "acloud server applications static-roots describe APPLICATION"
+  },
+  {
+    "command": "acloud server applications static-roots update",
+    "summary": "Directories outside wp-content. update replaces the whole set from --expected-revision; needs Application Static Root Administrator.",
+    "usage": "acloud server applications static-roots update APPLICATION --expected-revision N [--static-root DIR ...] [--confirm APPLICATION]"
+  },
+  {
+    "command": "acloud server applications usage describe",
+    "summary": "Requests, egress, files and database by day. Needs Application Usage Viewer.",
+    "usage": "acloud server applications usage describe APPLICATION [--month YYYY-MM]"
+  },
+  {
+    "command": "acloud services disable",
+    "summary": "Owner only. Enabling admits the product's creations; it creates nothing, leaves the quota as it is (UNSET refuses creation) and grants no product role. Disabling is refused while the Project has a resource of the product or pending work. Without --etag the current one is read first.",
+    "usage": "acloud services disable SERVICE --project PROJECT_ID --reason TEXT [--etag ETAG]"
+  },
+  {
+    "command": "acloud services enable",
+    "summary": "Owner only. Enabling admits the product's creations; it creates nothing, leaves the quota as it is (UNSET refuses creation) and grants no product role. Disabling is refused while the Project has a resource of the product or pending work. Without --etag the current one is read first.",
+    "usage": "acloud services enable SERVICE --project PROJECT_ID --reason TEXT [--etag ETAG]"
+  },
+  {
+    "command": "acloud services list",
+    "summary": "What this server's Platform API does for each product, whoever asks.",
+    "usage": "acloud services list"
+  },
+  {
+    "command": "acloud version",
+    "summary": "Print this build; --check asks for a newer one.",
+    "usage": "acloud version [--check]"
+  }
+]
